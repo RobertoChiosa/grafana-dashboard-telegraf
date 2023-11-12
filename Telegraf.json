@@ -3,7 +3,7 @@
     {
       "name": "DS_INFLUXDB",
       "label": "influxdb",
-      "description": "",
+      "description": "InfluxDB datasource with Telegraf bucket with 7 days retention collecting metrics from internal config input plugin",
       "type": "datasource",
       "pluginId": "influxdb",
       "pluginName": "InfluxDB"
@@ -1562,8 +1562,10 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Telegraf",
+  "title": "Telegraf metrics monitoring temolate",
   "uid": "c420170c-8e58-4dc8-9d0d-a5250c26b596",
   "version": 8,
-  "weekStart": ""
+  "weekStart": "",
+  "gnetId": 19965,
+  "description": "A public dashboard for Telegraf metrics monitoring using Grafana"
 }
