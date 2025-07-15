@@ -168,7 +168,7 @@
           "refId": "A"
         }
       ],
-      "title": "Heap Memory Allocations",
+      "title": "Heap Memory in use",
       "type": "timeseries"
     },
     {
