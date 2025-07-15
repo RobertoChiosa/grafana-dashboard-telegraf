@@ -164,11 +164,11 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"mallocs\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"mallocs\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"nonnegative derivative\")",
           "refId": "A"
         }
       ],
-      "title": "Heap Memory in use",
+      "title": "Heap Memory Allocations",
       "type": "timeseries"
     },
     {
@@ -264,7 +264,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"num_gc\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true)\n  |> yield(name: \"nonnegative derivative\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"num_gc\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"nonnegative derivative\")",
           "refId": "A"
         }
       ],
@@ -365,7 +365,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"heap_in_use_bytes\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_memstats\")\n  |> filter(fn: (r) => r._field == \"heap_in_use_bytes\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -439,7 +439,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -500,7 +500,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_written\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_written\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -560,7 +560,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\" or r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean)  \n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\" or r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
           "refId": "A"
         }
       ],
@@ -620,7 +620,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\nimport \"experimental/query\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"metrics_dropped\")\n  |> aggregate.rate(every: v.windowPeriod, unit: 1s)\n  |> aggregateWindow(every: v.windowPeriod, fn: sum)",
+          "query": "import \"experimental/aggregate\"\nimport \"experimental/query\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._field == \"metrics_dropped\")\n  |> aggregate.rate(every: v.windowPeriod, unit: 1s)\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -719,7 +719,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\n  from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\" or r._field == \"metrics_written\")\n  |> aggregate.rate(every: v.windowPeriod, unit: 1s, groupColumns: [\"_field\"])",
+          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\" or r._field == \"metrics_written\")\n  |> aggregate.rate(every: v.windowPeriod, unit: 1s, groupColumns: [\"_field\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -819,7 +819,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"gather_errors\")\n  |> group()\n  |> aggregateWindow(every: v.windowPeriod, fn: sum)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
+          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"gather_errors\")\n  |> group()\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
           "refId": "A"
         }
       ],
@@ -919,7 +919,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_dropped\")\n  |> group()\n  |> aggregateWindow(every: v.windowPeriod, fn: sum)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_agent\")\n  |> filter(fn: (r) => r._field == \"metrics_dropped\")\n  |> group()\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
           "refId": "A"
         }
       ],
@@ -1031,7 +1031,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")\n  |> aggregateWindow(every: duration(v: int(v: v.windowPeriod) * 6), fn: sum)",
+          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"metrics_gathered\")\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")\n  |> aggregateWindow(every: duration(v: int(v: v.windowPeriod) * 6), fn: sum, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -1130,7 +1130,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
+          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
           "refId": "A"
         }
       ],
@@ -1229,7 +1229,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"gather_time_ns\")\n  |> map(fn: (r) => ({ r with _value: r._value / 1000000 }))\n  |> aggregateWindow(every: v.windowPeriod, fn: max)",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_gather\")\n  |> filter(fn: (r) => r._field == \"gather_time_ns\")\n  |> map(fn: (r) => ({ r with _value: r._value / 1000000 }))\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -1342,7 +1342,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"buffer_size\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max)",
+          "query": "from(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"buffer_size\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -1442,7 +1442,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
+          "query": "import \"experimental/aggregate\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"errors\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)\n  |> derivative(unit: v.windowPeriod, nonNegative: true, columns: [\"_value\"], timeColumn: \"_time\")",
           "refId": "A"
         }
       ],
@@ -1542,7 +1542,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB}"
           },
-          "query": "import \"date\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"write_time_ns\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max)",
+          "query": "import \"date\"\nfrom(bucket: \"Telegraf\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"internal_write\")\n  |> filter(fn: (r) => r._field == \"write_time_ns\")\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -1569,3 +1569,4 @@
   "gnetId": 19965,
   "description": "A public dashboard for Telegraf metrics monitoring using Grafana"
 }
+
